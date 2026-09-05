@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Result Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .form-container, .table-container {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 50%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #aaa;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        th {
+            background: #007BFF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Result Management System</h1>
+
+    <!-- Student Form -->
+    <div class="form-container">
+        <h2>Add Student Result</h2>
+        <form id="resultForm">
+            <label for="name">Student Name:</label>
+            <input type="text" id="name" required><br><br>
+
+            <label for="roll">Roll Number:</label>
+            <input type="text" id="roll" required><br><br>
+
+            <label for="marks">Marks:</label>
+            <input type="number" id="marks" required><br><br>
+
+            <button type="submit">Add Result</button>
+        </form>
+    </div>
+
+    <!-- Result Table -->
+    <div class="table-container">
+        <h2>Results</h2>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Roll Number</th>
+                    <th>Marks</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will appear here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById("resultForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let name = document.getElementById("name").value;
+            let roll = document.getElementById("roll").value;
+            let marks = document.getElementById("marks").value;
+
+            let status = marks >= 35 ? "Pass" : "Fail";
+
+            let table = document.getElementById("resultTable").getElementsByTagName("tbody")[0];
+            let newRow = table.insertRow();
+
+            newRow.insertCell(0).innerText = name;
+            newRow.insertCell(1).innerText = roll;
+            newRow.insertCell(2).innerText = marks;
+            newRow.insertCell(3).innerText = status;
+
+            // Clear form
+            document.getElementById("resultForm").reset();
+        });
+    </script>
+</body>
+</html>

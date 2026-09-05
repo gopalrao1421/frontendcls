@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Sharing App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      margin-top: 40px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 450px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .expense-list {
+      margin-top: 20px;
+    }
+    .expense-item {
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .balances {
+      margin-top: 20px;
+      background: #eef;
+      padding: 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Expense Sharing App</h1>
+    <input type="text" id="groupMembers" placeholder="Enter members (comma separated)">
+    <input type="number" id="amount" placeholder="Enter expense amount">
+    <input type="text" id="payer" placeholder="Who paid? (name)">
+    <input type="text" id="item" placeholder="Expense type/item (e.g. Rent, Food)">
+    <button onclick="addExpense()">Add Expense</button>
+
+    <div class="expense-list" id="expenseList"></div>
+    <div class="balances" id="balances"></div>
+  </div>
+
+  <script>
+    let members = [];
+    let expenses = [];
+
+    function addExpense() {
+      const memberInput = document.getElementById('groupMembers').value;
+      if (memberInput) {
+        members = memberInput.split(',').map(m => m.trim());
+      }
+      const amount = parseFloat(document.getElementById('amount').value);
+      const payer = document.getElementById('payer').value.trim();
+      const item = document.getElementById('item').value.trim();
+
+      if (!amount || !payer || !item || members.length === 0) {
+        alert("Please fill all fields correctly!");
+        return;
+      }
+
+      const expense = { amount, payer, item };
+      expenses.push(expense);
+
+      displayExpenses();
+      calculateBalances();
+
+      document.getElementById('amount').value = '';
+      document.getElementById('payer').value = '';
+      document.getElementById('item').value = '';
+    }
+
+    function displayExpenses() {
+      const list = document.getElementById('expenseList');
+      list.innerHTML = '<h3>Expenses</h3>';
+      expenses.forEach((e) => {
+        list.innerHTML += `
+          <div class="expense-item">
+            <span>${e.item}: ₹${e.amount} paid by ${e.payer}</span>
+          </div>
+        `;
+      });
+    }
+
+    function calculateBalances() {
+      const balances = {};
+      members.forEach(m => balances[m] = 0);
+
+      expenses.forEach(e => {
+        const splitAmount = e.amount / members.length;
+        members.forEach(m => {
+          if (m === e.payer) {
+            balances[m] += e.amount - splitAmount;
+          } else {
+            balances[m] -= splitAmount;
+          }
+        });
+      });
+
+      const balanceDiv = document.getElementById('balances');
+      balanceDiv.innerHTML = "<h3>Balances</h3>";
+      for (let m in balances) {
+        balanceDiv.innerHTML += `<p>${m}: ₹${balances[m].toFixed(2)}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
