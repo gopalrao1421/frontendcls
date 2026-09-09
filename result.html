@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Result Management System</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    padding:20px;
+}
+
+.container{
+    width:850px;
+    background:white;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 15px 35px rgba(0,0,0,0.3);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h1{
+    color:#1e3c72;
+    font-size:32px;
+}
+
+.header p{
+    color:gray;
+    margin-top:5px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+}
+
+label{
+    margin-bottom:5px;
+    font-weight:600;
+}
+
+input{
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#1e3c72;
+}
+
+.btn{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    background:#1e3c72;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#16315d;
+}
+
+.result-card{
+    margin-top:25px;
+    padding:20px;
+    border-radius:10px;
+    background:#f4f8ff;
+    display:none;
+}
+
+.result-card h2{
+    color:#1e3c72;
+    margin-bottom:15px;
+}
+
+.result-card p{
+    margin:8px 0;
+    font-size:17px;
+}
+
+.pass{
+    color:green;
+    font-weight:bold;
+}
+
+.fail{
+    color:red;
+    font-weight:bold;
+}
+
+.grade{
+    color:#1e3c72;
+    font-weight:bold;
+    font-size:20px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:15px;
+    color:gray;
+    font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🎓 Student Result Management System</h1>
+        <p>Enter Student Information and Generate Result</p>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="input-group">
+            <label>Student Name</label>
+            <input type="text" id="name">
+        </div>
+
+        <div class="input-group">
+            <label>Roll Number</label>
+            <input type="text" id="roll">
+        </div>
+
+        <div class="input-group">
+            <label>English Marks</label>
+            <input type="number" id="eng">
+        </div>
+
+        <div class="input-group">
+            <label>Mathematics Marks</label>
+            <input type="number" id="math">
+        </div>
+
+        <div class="input-group">
+            <label>Science Marks</label>
+            <input type="number" id="sci">
+        </div>
+
+        <div class="input-group">
+            <label>Social Marks</label>
+            <input type="number" id="soc">
+        </div>
+
+        <div class="input-group">
+            <label>Computer Marks</label>
+            <input type="number" id="comp">
+        </div>
+
+    </div>
+
+    <button class="btn" onclick="generateResult()">
+        Generate Result
+    </button>
+
+    <div class="result-card" id="resultCard">
+        <h2>📋 Result Card</h2>
+
+        <p><strong>Name :</strong> <span id="rname"></span></p>
+        <p><strong>Roll No :</strong> <span id="rroll"></span></p>
+        <p><strong>Total Marks :</strong> <span id="rtotal"></span></p>
+        <p><strong>Percentage :</strong> <span id="rpercentage"></span></p>
+        <p><strong>Grade :</strong> <span class="grade" id="rgrade"></span></p>
+        <p><strong>Status :</strong> <span id="rstatus"></span></p>
+    </div>
+
+    <div class="footer">
+        © 2026 Student Result Management System
+    </div>
+
+</div>
+
+<script>
+
+function generateResult(){
+
+    let name=document.getElementById("name").value;
+    let roll=document.getElementById("roll").value;
+
+    let eng=parseFloat(document.getElementById("eng").value)||0;
+    let math=parseFloat(document.getElementById("math").value)||0;
+    let sci=parseFloat(document.getElementById("sci").value)||0;
+    let soc=parseFloat(document.getElementById("soc").value)||0;
+    let comp=parseFloat(document.getElementById("comp").value)||0;
+
+    let total=eng+math+sci+soc+comp;
+    let percentage=total/5;
+
+    let grade="";
+
+    if(percentage>=90)
+        grade="A+";
+    else if(percentage>=80)
+        grade="A";
+    else if(percentage>=70)
+        grade="B";
+    else if(percentage>=60)
+        grade="C";
+    else if(percentage>=50)
+        grade="D";
+    else
+        grade="F";
+
+    let status=(percentage>=35)
+        ? "<span class='pass'>PASS ✅</span>"
+        : "<span class='fail'>FAIL ❌</span>";
+
+    document.getElementById("resultCard").style.display="block";
+
+    document.getElementById("rname").innerHTML=name;
+    document.getElementById("rroll").innerHTML=roll;
+    document.getElementById("rtotal").innerHTML=total + " / 500";
+    document.getElementById("rpercentage").innerHTML=percentage.toFixed(2) + "%";
+    document.getElementById("rgrade").innerHTML=grade;
+    document.getElementById("rstatus").innerHTML=status;
+}
+
+</script>
+
+</body>
+</html>
