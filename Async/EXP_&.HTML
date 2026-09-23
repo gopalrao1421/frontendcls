@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #4facfe;
+            color: white;
+            padding: 40px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        #weather {
+            margin: 30px auto;
+            padding: 25px;
+            max-width: 400px;
+            background: white;
+            color: #222;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🌤️ Weather Dashboard</h1>
+
+    <input id="city" type="text" placeholder="Enter city" value="Mumbai">
+    <button onclick="getWeather()">Search</button>
+
+    <div id="weather">
+        <h2>Weather Information</h2>
+        <p id="result">Enter a city and click Search</p>
+    </div>
+
+    <script>
+        async function getWeather() {
+
+            const city = document.getElementById("city").value;
+            const result = document.getElementById("result");
+
+            if (city === "") {
+                result.innerHTML = "Please enter a city.";
+                return;
+            }
+
+            result.innerHTML = "Loading...";
+
+            try {
+
+                // Get latitude and longitude
+                const geoResponse = await fetch(
+                    `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`
+                );
+
+                const geoData = await geoResponse.json();
+
+                if (!geoData.results) {
+                    result.innerHTML = "City not found.";
+                    return;
+                }
+
+                const location = geoData.results[0];
+
+                // Get weather
+                const weatherResponse = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m`
+                );
+
+                const weatherData = await weatherResponse.json();
+
+                const weather = weatherData.current;
+
+                // Display result
+                result.innerHTML = `
+                    <h2>${location.name}</h2>
+                    <p>🌡️ Temperature: ${weather.temperature_2m} °C</p>
+                    <p>💧 Humidity: ${weather.relative_humidity_2m}%</p>
+                    <p>💨 Wind Speed: ${weather.wind_speed_10m} km/h</p>
+                `;
+
+            } catch (error) {
+
+                result.innerHTML =
+                    "❌ Error fetching weather data.";
+
+                console.log(error);
+            }
+        }
+    </script>
+
+</body>
+</html>

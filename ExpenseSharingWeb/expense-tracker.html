@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Expense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --teal: #028090;
+    --seafoam: #00A896;
+    --mint: #02C39A;
+    --dark: #0B2B2E;
+    --bg: #F3F6F5;
+    --card: #FFFFFF;
+    --ink: #16221F;
+    --muted: #5B6764;
+    --border: #E3E9E7;
+    --danger: #B3453A;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0B2B2E;
+      --card: #123539;
+      --ink: #EAF4F2;
+      --muted: #9FB8B4;
+      --border: #1D4448;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0B2B2E;
+    --card: #123539;
+    --ink: #EAF4F2;
+    --muted: #9FB8B4;
+    --border: #1D4448;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.75rem; }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(1.7rem, 5vw, 2.3rem);
+    margin: 0 0 0.2rem;
+    letter-spacing: -0.01em;
+  }
+  .tag { color: var(--muted); font-size: 0.95rem; margin: 0; }
+  #themeBtn {
+    border: 1px solid var(--border); background: var(--card); color: var(--ink);
+    border-radius: 999px; width: 2.4rem; height: 2.4rem; font-size: 1.1rem;
+    cursor: pointer; flex: none;
+  }
+  .hero {
+    background: linear-gradient(135deg, var(--teal), var(--dark));
+    color: #fff; border-radius: 20px; padding: 1.75rem 1.5rem;
+    margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.5rem;
+  }
+  .hero .stat { flex: 1; min-width: 140px; }
+  .hero .stat .num { font-family: 'Fraunces', serif; font-size: clamp(1.6rem, 6vw, 2.1rem); font-weight: 600; }
+  .hero .stat .lbl { font-size: 0.82rem; opacity: 0.85; margin-top: 0.15rem; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 1.4rem; margin-bottom: 1.25rem;
+  }
+  .card h2 { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 600; margin: 0 0 1rem; }
+  form { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+  form .full { grid-column: 1 / -1; }
+  label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
+  input, select {
+    width: 100%; padding: 0.65rem 0.7rem; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--ink); font-family: inherit; font-size: 0.95rem;
+  }
+  input:focus, select:focus, button:focus-visible { outline: 2px solid var(--mint); outline-offset: 1px; }
+  button.add {
+    grid-column: 1 / -1; background: var(--mint); color: #06251F; border: none;
+    border-radius: 10px; padding: 0.75rem; font-weight: 600; font-size: 0.98rem; cursor: pointer;
+  }
+  button.add:hover { filter: brightness(1.05); }
+  .err { grid-column: 1/-1; color: var(--danger); font-size: 0.85rem; min-height: 1.1em; margin: -0.2rem 0 0; }
+  .bars { display: flex; flex-direction: column; gap: 0.7rem; }
+  .bar-row .top { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.3rem; }
+  .bar-track { background: var(--bg); border-radius: 999px; height: 9px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; background: var(--seafoam); }
+  ul.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+  ul.list li {
+    display: flex; align-items: center; gap: 0.85rem; padding: 0.65rem 0.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  ul.list li:last-child { border-bottom: none; }
+  .cat-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; flex: none; }
+  .item-main { flex: 1; min-width: 0; }
+  .item-main .desc { font-weight: 500; font-size: 0.95rem; }
+  .item-main .meta { color: var(--muted); font-size: 0.78rem; }
+  .amt { font-weight: 600; font-family: 'Fraunces', serif; }
+  .del {
+    border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 1.05rem;
+    padding: 0.2rem 0.4rem; border-radius: 6px;
+  }
+  .del:hover { color: var(--danger); background: var(--bg); }
+  .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 1rem 0; }
+  .member-add { display: flex; gap: 0.6rem; }
+  .member-add input { flex: 1; }
+  .member-add button {
+    background: var(--teal); color: #fff; border: none; border-radius: 10px;
+    padding: 0 1.1rem; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.9rem; }
+  .chip {
+    display: flex; align-items: center; gap: 0.35rem; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.5rem 0.35rem 0.9rem;
+    font-size: 0.85rem;
+  }
+  .chip button {
+    border: none; background: transparent; color: var(--muted); cursor: pointer;
+    font-size: 0.95rem; line-height: 1; padding: 0.1rem 0.3rem;
+  }
+  .chip button:hover { color: var(--danger); }
+  @media (max-width: 480px) { form { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Expense Tracker</h1>
+      <p class="tag">See where every rupee goes.</p>
+    </div>
+    <button id="themeBtn" aria-label="Toggle dark mode" title="Toggle theme">🌓</button>
+  </header>
+
+  <div class="hero">
+    <div class="stat"><div class="num" id="totalSpent">₹0</div><div class="lbl">Total spent</div></div>
+    <div class="stat"><div class="num" id="txnCount">0</div><div class="lbl">Transactions</div></div>
+    <div class="stat"><div class="num" id="topCat">—</div><div class="lbl">Top category</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Group members</h2>
+    <div class="member-add">
+      <input type="text" id="memberInput" placeholder="Add a name, e.g. Asha">
+      <button type="button" id="addMemberBtn">Add</button>
+    </div>
+    <div class="chip-row" id="memberChips"></div>
+  </div>
+
+  <div class="card">
+    <h2>Add an expense</h2>
+    <form id="expenseForm">
+      <div>
+        <label for="amount">Amount (₹)</label>
+        <input type="number" id="amount" min="0.01" step="0.01" placeholder="0.00" required>
+      </div>
+      <div>
+        <label for="paidBy">Paid by</label>
+        <select id="paidBy" required>
+          <option value="">Add a member first</option>
+        </select>
+      </div>
+      <div>
+        <label for="category">Category</label>
+        <select id="category" required>
+          <option value="Food">Food</option>
+          <option value="Transport">Transport</option>
+          <option value="Bills">Bills</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="desc">Description (optional)</label>
+        <input type="text" id="desc" placeholder="e.g. Groceries">
+      </div>
+      <div>
+        <label for="date">Date</label>
+        <input type="date" id="date" required>
+      </div>
+      <div class="err" id="formErr"></div>
+      <button type="submit" class="add">Add expense</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Spending by category</h2>
+    <div class="bars" id="bars"><p class="empty">Add an expense to see the breakdown.</p></div>
+  </div>
+
+  <div class="card">
+    <h2>Spending by person</h2>
+    <div class="bars" id="personBars"><p class="empty">Add an expense to see who's spending.</p></div>
+  </div>
+
+  <div class="card">
+    <h2>Recent expenses</h2>
+    <ul class="list" id="list"></ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  var CATS = {
+    Food: '#028090', Transport: '#00A896', Bills: '#02C39A',
+    Entertainment: '#6FB9B3', Shopping: '#B08968', Other: '#8A8F8E'
+  };
+  var PERSON_COLORS = ['#028090', '#B08968', '#02C39A', '#5B7B9A', '#00A896', '#9C6B9E', '#8A8F8E', '#C97B4A'];
+  var STORE_KEY = 'expense-tracker-entries-v1';
+  var MEMBERS_KEY = 'expense-tracker-members-v1';
+  var themeBtn = document.getElementById('themeBtn');
+  var form = document.getElementById('expenseForm');
+  var listEl = document.getElementById('list');
+  var barsEl = document.getElementById('bars');
+  var personBarsEl = document.getElementById('personBars');
+  var errEl = document.getElementById('formErr');
+  var memberInput = document.getElementById('memberInput');
+  var addMemberBtn = document.getElementById('addMemberBtn');
+  var memberChipsEl = document.getElementById('memberChips');
+  var paidBySelect = document.getElementById('paidBy');
+
+  document.getElementById('date').valueAsDate = new Date();
+
+  function loadJSON(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function saveJSON(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+  function load() { return loadJSON(STORE_KEY); }
+  function save(entries) { saveJSON(STORE_KEY, entries); }
+
+  var entries = load();
+  var members = loadJSON(MEMBERS_KEY);
+
+  function fmt(n) {
+    return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+  }
+
+  function renderMembers() {
+    if (members.length === 0) {
+      memberChipsEl.innerHTML = '<p class="empty" style="width:100%;text-align:left;padding:0.2rem 0">Add the people in your group to start splitting expenses.</p>';
+    } else {
+      memberChipsEl.innerHTML = members.map(function (m) {
+        return '<span class="chip">' + m + '<button data-member="' + m + '" aria-label="Remove ' + m + '">✕</button></span>';
+      }).join('');
+    }
+    var prevSelected = paidBySelect.value;
+    paidBySelect.innerHTML = members.length === 0
+      ? '<option value="">Add a member first</option>'
+      : members.map(function (m) { return '<option value="' + m + '">' + m + '</option>'; }).join('');
+    if (members.indexOf(prevSelected) !== -1) paidBySelect.value = prevSelected;
+  }
+
+  function render() {
+    var total = 0;
+    var byCat = {};
+    var byPerson = {};
+    entries.forEach(function (e) {
+      total += e.amount;
+      byCat[e.category] = (byCat[e.category] || 0) + e.amount;
+      if (e.paidBy) byPerson[e.paidBy] = (byPerson[e.paidBy] || 0) + e.amount;
+    });
+
+    document.getElementById('totalSpent').textContent = fmt(total);
+    document.getElementById('txnCount').textContent = entries.length;
+    var topCat = Object.keys(byCat).sort(function (a, b) { return byCat[b] - byCat[a]; })[0];
+    document.getElementById('topCat').textContent = topCat || '—';
+
+    // Category bars
+    if (entries.length === 0) {
+      barsEl.innerHTML = '<p class="empty">Add an expense to see the breakdown.</p>';
+    } else {
+      var cats = Object.keys(byCat).sort(function (a, b) { return byCat[b] - byCat[a]; });
+      barsEl.innerHTML = cats.map(function (c) {
+        var pct = Math.round((byCat[c] / total) * 100);
+        return '<div class="bar-row">' +
+          '<div class="top"><span>' + c + '</span><span>' + fmt(byCat[c]) + ' · ' + pct + '%</span></div>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + (CATS[c] || '#00A896') + '"></div></div>' +
+          '</div>';
+      }).join('');
+    }
+
+    // Person bars
+    if (Object.keys(byPerson).length === 0) {
+      personBarsEl.innerHTML = '<p class="empty">Add an expense to see who\'s spending.</p>';
+    } else {
+      var people = Object.keys(byPerson).sort(function (a, b) { return byPerson[b] - byPerson[a]; });
+      personBarsEl.innerHTML = people.map(function (name, i) {
+        var pct = Math.round((byPerson[name] / total) * 100);
+        var color = PERSON_COLORS[i % PERSON_COLORS.length];
+        return '<div class="bar-row">' +
+          '<div class="top"><span>' + name + '</span><span>' + fmt(byPerson[name]) + ' · ' + pct + '%</span></div>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+          '</div>';
+      }).join('');
+    }
+
+    // List
+    if (entries.length === 0) {
+      listEl.innerHTML = '<p class="empty">No expenses yet — add your first one above.</p>';
+    } else {
+      var sorted = entries.slice().sort(function (a, b) { return b.date.localeCompare(a.date) || b.id - a.id; });
+      listEl.innerHTML = sorted.map(function (e) {
+        var d = new Date(e.date + 'T00:00:00');
+        var dateLabel = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        return '<li>' +
+          '<span class="cat-dot" style="background:' + (CATS[e.category] || '#00A896') + '"></span>' +
+          '<div class="item-main"><div class="desc">' + (e.desc || e.category) + '</div>' +
+          '<div class="meta">' + e.category + (e.paidBy ? ' · Paid by ' + e.paidBy : '') + ' · ' + dateLabel + '</div></div>' +
+          '<div class="amt">' + fmt(e.amount) + '</div>' +
+          '<button class="del" data-id="' + e.id + '" aria-label="Delete expense">✕</button>' +
+          '</li>';
+      }).join('');
+    }
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var amount = parseFloat(document.getElementById('amount').value);
+    var paidBy = paidBySelect.value;
+    var category = document.getElementById('category').value;
+    var desc = escapeHtml(document.getElementById('desc').value.trim());
+    var date = document.getElementById('date').value;
+
+    if (!amount || amount <= 0) { errEl.textContent = 'Enter an amount greater than 0.'; return; }
+    if (!paidBy) { errEl.textContent = 'Add a group member above and pick who paid.'; return; }
+    if (!date) { errEl.textContent = 'Pick a date.'; return; }
+    errEl.textContent = '';
+
+    entries.push({ id: Date.now(), amount: amount, paidBy: paidBy, category: category, desc: desc, date: date });
+    save(entries);
+    render();
+    form.reset();
+    document.getElementById('date').valueAsDate = new Date();
+    document.getElementById('amount').focus();
+  });
+
+  function addMember() {
+    var name = escapeHtml(memberInput.value.trim());
+    if (!name) return;
+    var exists = members.some(function (m) { return m.toLowerCase() === name.toLowerCase(); });
+    if (!exists) {
+      members.push(name);
+      saveJSON(MEMBERS_KEY, members);
+      renderMembers();
+    }
+    memberInput.value = '';
+    memberInput.focus();
+  }
+  addMemberBtn.addEventListener('click', addMember);
+  memberInput.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter') { ev.preventDefault(); addMember(); }
+  });
+  memberChipsEl.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('button[data-member]');
+    if (!btn) return;
+    var name = btn.getAttribute('data-member');
+    members = members.filter(function (m) { return m !== name; });
+    saveJSON(MEMBERS_KEY, members);
+    renderMembers();
+  });
+
+  listEl.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('.del');
+    if (!btn) return;
+    var id = Number(btn.getAttribute('data-id'));
+    entries = entries.filter(function (e) { return e.id !== id; });
+    save(entries);
+    render();
+  });
+
+  themeBtn.addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-theme');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('expense-tracker-theme', next); } catch (e) {}
+  });
+  try {
+    var savedTheme = localStorage.getItem('expense-tracker-theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  } catch (e) {}
+
+  renderMembers();
+  render();
+})();
+</script>
+</body>
+</html>
