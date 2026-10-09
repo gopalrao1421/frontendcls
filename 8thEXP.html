@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment 8 - Dashboard</title>
+    <style>
+        body{
+            margin:0;
+            font-family:Arial,sans-serif;
+            background:#f3f4f6;
+        }
+
+        .login-container{
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .login-box{
+            background:white;
+            padding:30px;
+            width:350px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,0.2);
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+            box-sizing:border-box;
+        }
+
+        button{
+            padding:10px;
+            cursor:pointer;
+        }
+
+        .header{
+            background:#111827;
+            color:white;
+            padding:15px;
+            display:none;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .content{
+            padding:20px;
+            display:none;
+        }
+
+        .card{
+            display:inline-block;
+            width:200px;
+            margin:10px;
+            padding:20px;
+            background:white;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="login-container">
+    <form class="login-box" onsubmit="login(event)">
+        <h2>My Application</h2>
+
+        <input type="email" id="email" placeholder="Email" required>
+
+        <input type="password" id="password" placeholder="Password" required>
+
+        <button type="submit">Login</button>
+
+        <p>
+            Demo Login:<br>
+            admin@example.com<br>
+            Password: 123456
+        </p>
+    </form>
+</div>
+
+<div id="header" class="header">
+    <h2>Dashboard</h2>
+
+    <div>
+        <button onclick="showDashboard()">Dashboard</button>
+        <button onclick="showProfile()">Profile</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div id="content" class="content"></div>
+
+<script>
+let username = "Admin User";
+
+function login(event){
+    event.preventDefault();
+
+    let email =
+        document.getElementById("email").value;
+
+    let password =
+        document.getElementById("password").value;
+
+    if(
+        email === "admin@example.com" &&
+        password === "123456"
+    ){
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("header").style.display = "flex";
+        document.getElementById("content").style.display = "block";
+
+        showDashboard();
+    }
+    else{
+        alert("Invalid Email or Password");
+    }
+}
+
+function showDashboard(){
+    document.getElementById("content").innerHTML = `
+        <h1>Welcome, ${username}</h1>
+
+        <div class="card">
+            <h3>Users</h3>
+            <h2>120</h2>
+        </div>
+
+        <div class="card">
+            <h3>Orders</h3>
+            <h2>45</h2>
+        </div>
+
+        <div class="card">
+            <h3>Revenue</h3>
+            <h2>$12,500</h2>
+        </div>
+    `;
+}
+
+function showProfile(){
+    document.getElementById("content").innerHTML = `
+        <h1>Profile</h1>
+
+        <p><b>Name:</b> ${username}</p>
+        <p><b>Email:</b> admin@example.com</p>
+
+        <button onclick="alert('Profile Updated Successfully')">
+            Save Profile
+        </button>
+    `;
+}
+
+function logout(){
+    location.reload();
+}
+</script>
+
+</body>
+</html>
