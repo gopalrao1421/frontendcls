@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System | Front-End Lab Exam</title>
+  <!-- Google Font: Inter for crisp typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==================== 1. CSS CUSTOM PROPERTIES (LIGHT & DARK THEMES) ==================== */
+    :root {
+      --bg-body: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-surface-alt: #f8fafc;
+      --bg-header: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-soft: #eef2ff;
+      --success: #059669;
+      --success-bg: #d1fae5;
+      --warning: #d97706;
+      --warning-bg: #fef3c7;
+      --danger: #e11d48;
+      --danger-bg: #ffe4e6;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #0b1120;
+      --bg-surface: #1e293b;
+      --bg-surface-alt: #0f172a;
+      --bg-header: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --success: #34d399;
+      --success-bg: rgba(16, 185, 129, 0.18);
+      --warning: #fbbf24;
+      --warning-bg: rgba(245, 158, 11, 0.18);
+      --danger: #fb7185;
+      --danger-bg: rgba(244, 63, 94, 0.18);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 12px 28px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ==================== 2. RESET & BASE TYPOGRAPHY ==================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* ==================== 3. HEADER & TOP UTILITY BAR ==================== */
+    .app-header {
+      background: var(--bg-header);
+      color: #ffffff;
+      padding: 1.5rem 0 1.75rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      font-size: 0.82rem;
+      color: #c7d2fe;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .btn-header {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-header:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* ==================== 4. KPI STAT CARDS & ANALYTICS ==================== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 0.9rem;
+      margin-top: 1.35rem;
+    }
+
+    .kpi-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      padding: 0.9rem 1.1rem;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #c7d2fe;
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-top: 0.15rem;
+      color: #ffffff;
+    }
+
+    .kpi-card.kpi-danger .kpi-value {
+      color: #fda4af;
+    }
+
+    .kpi-card.kpi-success .kpi-value {
+      color: #6ee7b7;
+    }
+
+    /* Analytics Card */
+    .analytics-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .analytics-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .analytics-header h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.85rem 1.75rem;
+    }
+
+    .chart-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .chart-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .chart-track {
+      width: 100%;
+      height: 9px;
+      background: var(--bg-surface-alt);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .chart-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--accent);
+      transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ==================== 5. MULTI-TAB NAVIGATION ==================== */
+    .tabs-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      border-bottom: 2px solid var(--border-color);
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.7rem 1.15rem;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      position: relative;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      background: var(--bg-surface);
+      box-shadow: inset 0 -3px 0 var(--accent);
+    }
+
+    .tab-badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.72rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 1.5rem 0 2.5rem;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ==================== 6. CARDS, FORMS & TOOLBARS ==================== */
+    .catalog-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .catalog-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 0.9rem;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.3rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      width: 100%;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.58rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.86rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .error-msg {
+      color: var(--danger);
+      font-size: 0.74rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s, opacity 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-alt);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    .btn-sm {
+      padding: 0.36rem 0.65rem;
+      font-size: 0.76rem;
+      border-radius: 8px;
+    }
+
+    .btn-issue {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .btn-issue:hover {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-issue:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-return {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .btn-return:hover {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-renew {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .btn-renew:hover {
+      background: var(--warning);
+      color: #ffffff;
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    /* Filter Toolbar */
+    .toolbar {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ==================== 7. RESPONSIVE DATA TABLES ==================== */
+    .table-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-surface-alt);
+      color: var(--text-secondary);
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.86rem;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--bg-surface-alt);
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .book-title-cell {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .book-author-cell {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-available {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge-issued {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .badge-overdue {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .badge-cat {
+      background: var(--bg-surface-alt);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .action-group {
+      display: inline-flex;
+      gap: 0.4rem;
+      justify-content: flex-end;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2.75rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    /* ==================== 8. ACTIVITY LOG LIST ==================== */
+    .log-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .log-item {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .log-time {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ==================== 9. MODALS & SLIDE-IN TOAST ==================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 450px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      animation: popIn 0.18s ease-out;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+
+    /* Slide-in Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 360px;
+    }
+
+    .toast {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border-left: 4px solid var(--accent);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      font-size: 0.84rem;
+      font-weight: 500;
+      animation: slideIn 0.25s ease-out;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.warning { border-left-color: var(--warning); }
+    .toast.danger  { border-left-color: var(--danger); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(24px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 1.1rem;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HEADER & KPI ANALYTICS ==================== -->
+  <header class="app-header">
+    <div class="container">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <div>
+            <h1>Central Library Management System</h1>
+            <p>Front-End Lab Exam Edition &bull; Multi-Copy Inventory, Circulation &amp; Audit Analytics</p>
+          </div>
+        </div>
+
+        <!-- Utility Actions: Export CSV, Reset Demo, Dark/Light Theme -->
+        <div class="header-actions">
+          <button type="button" class="btn-header" onclick="exportCatalogCSV()">
+            &#8681; Export CSV
+          </button>
+          <button type="button" class="btn-header" onclick="resetDemoData()">
+            &#8635; Reset Demo Data
+          </button>
+          <button type="button" class="btn-header" id="theme-toggle-btn" onclick="toggleTheme()">
+            &#9790; Dark Mode
+          </button>
+        </div>
+      </div>
+
+      <!-- 5 Top KPI Stat Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Catalog Copies</div>
+          <div class="kpi-value" id="kpi-total-copies">0</div>
+        </div>
+        <div class="kpi-card kpi-success">
+          <div class="kpi-label">Available Copies</div>
+          <div class="kpi-value" id="kpi-available-copies">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Issued Copies</div>
+          <div class="kpi-value" id="kpi-issued-copies">0</div>
+        </div>
+        <div class="kpi-card kpi-danger">
+          <div class="kpi-label">Overdue Books</div>
+          <div class="kpi-value" id="kpi-overdue-books">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Members</div>
+          <div class="kpi-value" id="kpi-total-members">0</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ==================== PURE CSS/SVG CATEGORY ANALYTICS WIDGET ==================== -->
+    <section class="analytics-panel" aria-label="Category Distribution">
+      <div class="analytics-header">
+        <h2>Collection Distribution by Category</h2>
+        <span class="mono" id="analytics-subtitle">0 Titles across 6 Categories</span>
+      </div>
+      <div class="chart-grid" id="category-chart">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- ==================== MULTI-TAB NAVIGATION ==================== -->
+    <nav class="tabs-bar" role="tablist" aria-label="Library Sections">
+      <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="tab-catalog" onclick="switchTab('tab-catalog')">
+        Book Catalog <span class="tab-badge" id="badge-catalog">0</span>
+      </button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tab-circulation" onclick="switchTab('tab-circulation')">
+        Active Circulation &amp; Overdue <span class="tab-badge" id="badge-circulation">0</span>
+      </button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tab-logs" onclick="switchTab('tab-logs')">
+        Activity &amp; Transaction Log <span class="tab-badge" id="badge-logs">0</span>
+      </button>
+    </nav>
+
+    <!-- ==================== TAB 1: BOOK CATALOG (CRUD + ISSUE) ==================== -->
+    <section id="tab-catalog" class="tab-panel active">
+      <div class="catalog-layout">
+        <!-- Left Panel: Add New Book Form -->
+        <aside class="card">
+          <h2 class="card-title">Add New Book</h2>
+          <form id="add-book-form" novalidate>
+            <div class="form-group">
+              <label for="add-isbn">ISBN / Book ID *</label>
+              <input type="text" id="add-isbn" placeholder="e.g., ISBN-978-01" />
+              <div class="error-msg" id="err-add-isbn"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="add-title">Book Title *</label>
+              <input type="text" id="add-title" placeholder="e.g., Operating System Concepts" />
+              <div class="error-msg" id="err-add-title"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="add-author">Author Name *</label>
+              <input type="text" id="add-author" placeholder="e.g., Abraham Silberschatz" />
+              <div class="error-msg" id="err-add-author"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="add-category">Category *</label>
+              <select id="add-category">
+                <option value="">-- Select Category --</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Fiction">Fiction</option>
+                <option value="Science">Science</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="History">History</option>
+                <option value="Reference">Reference</option>
+              </select>
+              <div class="error-msg" id="err-add-category"></div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="add-copies">Total Copies *</label>
+                <input type="number" id="add-copies" min="1" max="100" value="3" />
+                <div class="error-msg" id="err-add-copies"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="add-shelf">Shelf Location *</label>
+                <input type="text" id="add-shelf" placeholder="e.g., Rack A-04" />
+                <div class="error-msg" id="err-add-shelf"></div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.4rem;">
+              + Add Book to Catalog
+            </button>
+          </form>
+        </aside>
+
+        <!-- Right Panel: Search, Filters, Sorting & Catalog Table -->
+        <div>
+          <div class="toolbar">
+            <input type="text" id="search-input" placeholder="Search title, author, ISBN, or shelf..." oninput="renderCatalog()" />
+
+            <select id="filter-category" onchange="renderCatalog()">
+              <option value="ALL">All Categories</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Fiction">Fiction</option>
+              <option value="Science">Science</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="History">History</option>
+              <option value="Reference">Reference</option>
+            </select>
+
+            <select id="filter-status" onchange="renderCatalog()">
+              <option value="ALL">All Statuses</option>
+              <option value="AVAILABLE">Available Copies</option>
+              <option value="ISSUED">Has Issued Copies</option>
+              <option value="OVERDUE">Has Overdue Copies</option>
+            </select>
+
+            <select id="sort-select" onchange="renderCatalog()">
+              <option value="RECENT">Sort: Recently Added</option>
+              <option value="TITLE_ASC">Sort: Title (A - Z)</option>
+              <option value="AUTHOR_ASC">Sort: Author (A - Z)</option>
+              <option value="MOST_AVAILABLE">Sort: Most Available</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ISBN / Shelf</th>
+                  <th>Book Details</th>
+                  <th>Category</th>
+                  <th>Copies (Avail / Total)</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="catalog-tbody"></tbody>
+            </table>
+            <div id="catalog-empty" class="empty-state" style="display: none;">
+              <strong>No matching books found.</strong>
+              <p style="font-size: 0.8rem; margin-top: 0.25rem;">Try adjusting your search or filter criteria.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: ACTIVE CIRCULATION & OVERDUE TRACKER ==================== -->
+    <section id="tab-circulation" class="tab-panel">
+      <div class="card" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem;">
+        <div>
+          <h2 style="font-size: 1rem; font-weight: 700;">Active Loans &amp; Automatic Fine Calculator</h2>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">Late fine accrues automatically at <strong>&#8377;5 / day</strong> past the due date.</p>
+        </div>
+        <div class="mono" id="total-fines-display" style="font-weight: 700; color: var(--danger);">
+          Total Pending Fines: &#8377;0
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Book Title &amp; ISBN</th>
+              <th>Borrower (Name &amp; ID)</th>
+              <th>Issue Date</th>
+              <th>Due Date</th>
+              <th>Status &amp; Fine</th>
+              <th style="text-align: right;">Circulation Actions</th>
+            </tr>
+          </thead>
+          <tbody id="circulation-tbody"></tbody>
+        </table>
+        <div id="circulation-empty" class="empty-state" style="display: none;">
+          <strong>No active loans right now.</strong>
+          <p style="font-size: 0.8rem; margin-top: 0.25rem;">Issue a book from the Book Catalog tab to track circulation here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: ACTIVITY & TRANSACTION LOG ==================== -->
+    <section id="tab-logs" class="tab-panel">
+      <div class="card">
+        <div class="card-title">
+          <span>Audit &amp; Transaction History</span>
+          <button type="button" class="btn btn-danger btn-sm" onclick="clearLogs()">Clear Log</button>
+        </div>
+        <ul class="log-list" id="log-list"></ul>
+        <div id="logs-empty" class="empty-state" style="display: none;">
+          <strong>No activity recorded yet.</strong>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODAL 1: ISSUE BOOK ==================== -->
+  <div id="modal-issue" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="issue-modal-heading">
+    <div class="modal-box">
+      <h3 id="issue-modal-heading" style="font-size: 1.1rem; font-weight: 700;">Issue Book Copy</h3>
+      <p id="issue-book-label" style="font-size: 0.84rem; color: var(--accent); font-weight: 600; margin-top: 0.25rem;"></p>
+
+      <form id="issue-form" style="margin-top: 1rem;">
+        <input type="hidden" id="issue-isbn" />
+        <div class="form-group">
+          <label for="issue-member-name">Member Full Name *</label>
+          <input type="text" id="issue-member-name" placeholder="e.g., Aarav Sharma" />
+          <div class="error-msg" id="err-issue-name">Member name is required.</div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="issue-member-id">Member / Roll ID *</label>
+            <input type="text" id="issue-member-id" placeholder="e.g., CSE-2026-042" />
+            <div class="error-msg" id="err-issue-id">Member ID is required.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="issue-due-date">Due Date (Default +14d) *</label>
+            <input type="date" id="issue-due-date" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-issue')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Issue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: EDIT BOOK ==================== -->
+  <div id="modal-edit" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-heading">
+    <div class="modal-box">
+      <h3 id="edit-modal-heading" style="font-size: 1.1rem; font-weight: 700;">Edit Book Details</h3>
+      <form id="edit-form" style="margin-top: 1rem;">
+        <input type="hidden" id="edit-isbn" />
+
+        <div class="form-group">
+          <label for="edit-title">Book Title *</label>
+          <input type="text" id="edit-title" />
+        </div>
+
+        <div class="form-group">
+          <label for="edit-author">Author Name *</label>
+          <input type="text" id="edit-author" />
+        </div>
+
+        <div class="form-group">
+          <label for="edit-category">Category *</label>
+          <select id="edit-category">
+            <option value="Computer Science">Computer Science</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Science">Science</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="History">History</option>
+            <option value="Reference">Reference</option>
+          </select>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="edit-copies">Total Copies *</label>
+            <input type="number" id="edit-copies" min="1" max="100" />
+            <div class="error-msg" id="err-edit-copies"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-shelf">Shelf Location *</label>
+            <input type="text" id="edit-shelf" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: DELETE CONFIRMATION ==================== -->
+  <div id="modal-delete" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-modal-heading">
+    <div class="modal-box">
+      <h3 id="delete-modal-heading" style="font-size: 1.1rem; font-weight: 700;">Delete Book Record?</h3>
+      <p id="delete-modal-msg" style="font-size: 0.86rem; color: var(--text-secondary); margin-top: 0.5rem;"></p>
+      <input type="hidden" id="delete-isbn" />
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-delete')">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDeleteBook()">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide-in Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <footer>
+    Central Library Management System &bull; Built with Vanilla HTML5, CSS Custom Properties &amp; JavaScript LocalStorage API
+  </footer>
+
+  <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
+  <script>
+    /**
+     * CONSTANTS & STORAGE KEYS
+     */
+    const KEYS = {
+      BOOKS: 'lms_v2_books',
+      LOANS: 'lms_v2_loans',
+      LOGS:  'lms_v2_logs',
+      THEME: 'lms_v2_theme'
+    };
+
+    const CATEGORIES = [
+      'Computer Science',
+      'Fiction',
+      'Science',
+      'Mathematics',
+      'History',
+      'Reference'
+    ];
+
+    const FINE_PER_DAY = 5; // ₹5 per overdue day
+
+    // Application State
+    let books = [];
+    let loans = [];
+    let logs = [];
+
+    /**
+     * DATE HELPERS (YYYY-MM-DD formatting & day differences)
+     */
+    function getOffsetDateStr(offsetDays = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d.toISOString().split('T')[0];
+    }
+
+    function calculateOverdueDays(dueDateStr) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const due = new Date(dueDateStr + 'T00:00:00');
+      const diffMs = today - due;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? diffDays : 0;
+    }
+
+    /**
+     * SEED DATA FOR INITIAL LOAD & LIVE EXAM DEMO RESET
+     */
+    function createDemoSeed() {
+      const seedBooks = [
+        { isbn: 'ISBN-101', title: 'Introduction to Algorithms (CLRS)', author: 'Thomas H. Cormen', category: 'Computer Science', totalCopies: 5, shelf: 'CS-A1', addedAt: 1005 },
+        { isbn: 'ISBN-102', title: 'Clean Code', author: 'Robert C. Martin', category: 'Computer Science', totalCopies: 4, shelf: 'CS-A2', addedAt: 1004 },
+        { isbn: 'ISBN-103', title: 'Linear Algebra Done Right', author: 'Sheldon Axler', category: 'Mathematics', totalCopies: 3, shelf: 'MA-B1', addedAt: 1003 },
+        { isbn: 'ISBN-104', title: 'A Brief History of Time', author: 'Stephen Hawking', category: 'Science', totalCopies: 3, shelf: 'SC-C4', addedAt: 1002 },
+        { isbn: 'ISBN-105', title: '1984', author: 'George Orwell', category: 'Fiction', totalCopies: 4, shelf: 'FI-D2', addedAt: 1001 },
+        { isbn: 'ISBN-106', title: 'Sapiens: A Brief History of Humankind', author: 'Yuval Noah Harari', category: 'History', totalCopies: 2, shelf: 'HI-E1', addedAt: 1000 },
+        { isbn: 'ISBN-107', title: 'Oxford Dictionary of Computing', author: 'John Daintith', category: 'Reference', totalCopies: 2, shelf: 'RF-01', addedAt: 999 }
+      ];
+
+      // Include 1 active loan and 1 intentionally overdue loan to showcase the fine calculator immediately
+      const seedLoans = [
+        {
+          loanId: 'LN-1001',
+          isbn: 'ISBN-101',
+          memberName: 'Ananya Sharma',
+          memberId: 'CSE-24-018',
+          issueDate: getOffsetDateStr(-5),
+          dueDate: getOffsetDateStr(9)
+        },
+        {
+          loanId: 'LN-1002',
+          isbn: 'ISBN-102',
+          memberName: 'Rohan Verma',
+          memberId: 'IT-24-052',
+          issueDate: getOffsetDateStr(-19),
+          dueDate: getOffsetDateStr(-5) // 5 days overdue -> ₹25 fine
+        }
+      ];
+
+      const seedLogs = [
+        { time: new Date().toLocaleTimeString(), action: 'System initialized with sample library catalog and circulation data.' }
+      ];
+
+      return { seedBooks, seedLoans, seedLogs };
+    }
+
+    /**
+     * LOCALSTORAGE PERSISTENCE
+     */
+    function loadState() {
+      try {
+        const savedBooks = localStorage.getItem(KEYS.BOOKS);
+        const savedLoans = localStorage.getItem(KEYS.LOANS);
+        const savedLogs  = localStorage.getItem(KEYS.LOGS);
+
+        if (savedBooks && savedLoans) {
+          books = JSON.parse(savedBooks);
+          loans = JSON.parse(savedLoans);
+          logs  = savedLogs ? JSON.parse(savedLogs) : [];
+        } else {
+          const { seedBooks, seedLoans, seedLogs } = createDemoSeed();
+          books = seedBooks;
+          loans = seedLoans;
+          logs  = seedLogs;
+          saveState();
+        }
+      } catch (err) {
+        console.error('Failed to load state:', err);
+        const { seedBooks, seedLoans, seedLogs } = createDemoSeed();
+        books = seedBooks;
+        loans = seedLoans;
+        logs  = seedLogs;
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(KEYS.BOOKS, JSON.stringify(books));
+        localStorage.setItem(KEYS.LOANS, JSON.stringify(loans));
+        localStorage.setItem(KEYS.LOGS, JSON.stringify(logs));
+      } catch (err) {
+        console.error('Failed to save state:', err);
+      }
+    }
+
+    function addAuditLog(message) {
+      const timestamp = new Date().toLocaleString([], {
+        month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      logs.unshift({ time: timestamp, action: message });
+      if (logs.length > 60) logs.pop(); // Keep log concise
+      saveState();
+      renderLogs();
+    }
+
+    /**
+     * XSS ESCAPE UTILITY & TOAST NOTIFICATIONS
+     */
+    function escapeHTML(value) {
+      const div = document.createElement('div');
+      div.textContent = String(value);
+      return div.innerHTML;
+    }
+
+    function showToast(message, variant = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${variant}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 220);
+      }, 3200);
+    }
+
+    /**
+     * THEME TOGGLE (LIGHT / DARK)
+     */
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const btn = document.getElementById('theme-toggle-btn');
+      btn.innerHTML = theme === 'dark' ? '&#9728; Light Mode' : '&#9790; Dark Mode';
+      localStorage.setItem(KEYS.THEME, theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+
+    /**
+     * TAB SWITCHING
+     */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const isTarget = btn.dataset.tab === tabId;
+        btn.classList.toggle('active', isTarget);
+        btn.setAttribute('aria-selected', String(isTarget));
+      });
+
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === tabId);
+      });
+    }
+
+    /**
+     * HELPER: COMPUTE COPY COUNTS FOR A BOOK
+     */
+    function getBookLoanStats(isbn) {
+      const activeLoans = loans.filter(l => l.isbn === isbn);
+      const overdueCount = activeLoans.filter(l => calculateOverdueDays(l.dueDate) > 0).length;
+      return {
+        issuedCount: activeLoans.length,
+        overdueCount
+      };
+    }
+
+    /**
+     * RENDER DASHBOARD KPI CARDS & CATEGORY ANALYTICS CHART
+     */
+    function renderDashboardAnalytics() {
+      let totalCopies = 0;
+      books.forEach(b => { totalCopies += Number(b.totalCopies); });
+
+      const issuedCopies = loans.length;
+      const availableCopies = Math.max(0, totalCopies - issuedCopies);
+      const overdueBooks = loans.filter(l => calculateOverdueDays(l.dueDate) > 0).length;
+      const uniqueMembers = new Set(loans.map(l => l.memberId.trim().toLowerCase())).size;
+
+      document.getElementById('kpi-total-copies').textContent = totalCopies;
+      document.getElementById('kpi-available-copies').textContent = availableCopies;
+      document.getElementById('kpi-issued-copies').textContent = issuedCopies;
+      document.getElementById('kpi-overdue-books').textContent = overdueBooks;
+      document.getElementById('kpi-total-members').textContent = uniqueMembers;
+
+      // Update Tab Badges
+      document.getElementById('badge-catalog').textContent = books.length;
+      document.getElementById('badge-circulation').textContent = loans.length;
+      document.getElementById('badge-logs').textContent = logs.length;
+
+      // Render Pure CSS Horizontal Bar Chart for Categories
+      const chartContainer = document.getElementById('category-chart');
+      document.getElementById('analytics-subtitle').textContent = `${books.length} Titles (${totalCopies} Copies)`;
+      chartContainer.innerHTML = '';
+
+      CATEGORIES.forEach(cat => {
+        const copiesInCat = books
+          .filter(b => b.category === cat)
+          .reduce((sum, b) => sum + Number(b.totalCopies), 0);
+        const pct = totalCopies > 0 ? Math.round((copiesInCat / totalCopies) * 100) : 0;
+
+        const row = document.createElement('div');
+        row.className = 'chart-row';
+        row.innerHTML = `
+          <div class="chart-meta">
+            <span>${escapeHTML(cat)}</span>
+            <span>${copiesInCat} copies (${pct}%)</span>
+          </div>
+          <div class="chart-track">
+            <div class="chart-fill" style="width: ${pct}%;"></div>
+          </div>
+        `;
+        chartContainer.appendChild(row);
+      });
+    }
+
+    /**
+     * RENDER TAB 1: BOOK CATALOG TABLE
+     */
+    function renderCatalog() {
+      const tbody = document.getElementById('catalog-tbody');
+      const emptyEl = document.getElementById('catalog-empty');
+
+      const query = document.getElementById('search-input').value.trim().toLowerCase();
+      const catFilter = document.getElementById('filter-category').value;
+      const statusFilter = document.getElementById('filter-status').value;
+      const sortBy = document.getElementById('sort-select').value;
+
+      // 1. Filter
+      let filtered = books.filter(book => {
+        const { issuedCount, overdueCount } = getBookLoanStats(book.isbn);
+        const available = book.totalCopies - issuedCount;
+
+        const matchesSearch =
+          book.title.toLowerCase().includes(query) ||
+          book.author.toLowerCase().includes(query) ||
+          book.isbn.toLowerCase().includes(query) ||
+          book.shelf.toLowerCase().includes(query);
+
+        const matchesCat = catFilter === 'ALL' || book.category === catFilter;
+
+        let matchesStatus = true;
+        if (statusFilter === 'AVAILABLE') matchesStatus = available > 0;
+        if (statusFilter === 'ISSUED') matchesStatus = issuedCount > 0;
+        if (statusFilter === 'OVERDUE') matchesStatus = overdueCount > 0;
+
+        return matchesSearch && matchesCat && matchesStatus;
+      });
+
+      // 2. Sort
+      filtered.sort((a, b) => {
+        if (sortBy === 'TITLE_ASC') return a.title.localeCompare(b.title);
+        if (sortBy === 'AUTHOR_ASC') return a.author.localeCompare(b.author);
+        if (sortBy === 'MOST_AVAILABLE') {
+          const availA = a.totalCopies - getBookLoanStats(a.isbn).issuedCount;
+          const availB = b.totalCopies - getBookLoanStats(b.isbn).issuedCount;
+          return availB - availA;
+        }
+        return (b.addedAt || 0) - (a.addedAt || 0);
+      });
+
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      filtered.forEach(book => {
+        const { issuedCount, overdueCount } = getBookLoanStats(book.isbn);
+        const available = Math.max(0, book.totalCopies - issuedCount);
+
+        let statusBadge = available > 0
+          ? `<span class="badge badge-available">${available} / ${book.totalCopies} Available</span>`
+          : `<span class="badge badge-issued">0 / ${book.totalCopies} (All Issued)</span>`;
+
+        if (overdueCount > 0) {
+          statusBadge += ` <span class="badge badge-overdue" style="margin-left:4px;">${overdueCount} Overdue</span>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="mono" style="font-weight:700;">${escapeHTML(book.isbn)}</div>
+            <div class="book-author-cell">Shelf: ${escapeHTML(book.shelf)}</div>
+          </td>
+          <td>
+            <div class="book-title-cell">${escapeHTML(book.title)}</div>
+            <div class="book-author-cell">by ${escapeHTML(book.author)}</div>
+          </td>
+          <td><span class="badge badge-cat">${escapeHTML(book.category)}</span></td>
+          <td>${statusBadge}</td>
+          <td style="text-align: right;">
+            <div class="action-group">
+              <button type="button" class="btn btn-sm btn-issue" ${available === 0 ? 'disabled' : ''} onclick="openIssueModal('${escapeHTML(book.isbn)}')">
+                Issue
+              </button>
+              <button type="button" class="btn btn-sm btn-secondary" onclick="openEditModal('${escapeHTML(book.isbn)}')">
+                Edit
+              </button>
+              <button type="button" class="btn btn-sm btn-danger" onclick="openDeleteModal('${escapeHTML(book.isbn)}')">
+                Delete
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /**
+     * RENDER TAB 2: ACTIVE CIRCULATION & OVERDUE TRACKER
+     */
+    function renderCirculation() {
+      const tbody = document.getElementById('circulation-tbody');
+      const emptyEl = document.getElementById('circulation-empty');
+      tbody.innerHTML = '';
+
+      let totalPendingFines = 0;
+
+      if (loans.length === 0) {
+        emptyEl.style.display = 'block';
+        document.getElementById('total-fines-display').innerHTML = 'Total Pending Fines: &#8377;0';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      loans.forEach(loan => {
+        const book = books.find(b => b.isbn === loan.isbn);
+        const bookTitle = book ? book.title : 'Unknown Book';
+        const overdueDays = calculateOverdueDays(loan.dueDate);
+        const fine = overdueDays * FINE_PER_DAY;
+        totalPendingFines += fine;
+
+        const statusHTML = overdueDays > 0
+          ? `<span class="badge badge-overdue">Overdue (${overdueDays}d) &bull; Fine: &#8377;${fine}</span>`
+          : `<span class="badge badge-available">On Time &bull; &#8377;0 Fine</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="book-title-cell">${escapeHTML(bookTitle)}</div>
+            <div class="mono">${escapeHTML(loan.isbn)}</div>
+          </td>
+          <td>
+            <div class="book-title-cell">${escapeHTML(loan.memberName)}</div>
+            <div class="mono">${escapeHTML(loan.memberId)}</div>
+          </td>
+          <td class="mono">${escapeHTML(loan.issueDate)}</td>
+          <td class="mono">${escapeHTML(loan.dueDate)}</td>
+          <td>${statusHTML}</td>
+          <td style="text-align: right;">
+            <div class="action-group">
+              <button type="button" class="btn btn-sm btn-renew" onclick="renewLoan('${escapeHTML(loan.loanId)}')">
+                Renew (+7d)
+              </button>
+              <button type="button" class="btn btn-sm btn-return" onclick="returnLoan('${escapeHTML(loan.loanId)}')">
+                Return Book
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('total-fines-display').innerHTML = `Total Pending Fines: &#8377;${totalPendingFines}`;
+    }
+
+    /**
+     * RENDER TAB 3: ACTIVITY & TRANSACTION LOG
+     */
+    function renderLogs() {
+      const list = document.getElementById('log-list');
+      const emptyEl = document.getElementById('logs-empty');
+      list.innerHTML = '';
+
+      if (logs.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      logs.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'log-item';
+        li.innerHTML = `
+          <span>${escapeHTML(item.action)}</span>
+          <span class="log-time">${escapeHTML(item.time)}</span>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    /**
+     * MASTER UI REFRESH
+     */
+    function refreshAll() {
+      renderDashboardAnalytics();
+      renderCatalog();
+      renderCirculation();
+      renderLogs();
+    }
+
+    /**
+     * ADD NEW BOOK FORM HANDLER
+     */
+    document.getElementById('add-book-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const isbn = document.getElementById('add-isbn').value.trim();
+      const title = document.getElementById('add-title').value.trim();
+      const author = document.getElementById('add-author').value.trim();
+      const category = document.getElementById('add-category').value;
+      const copies = parseInt(document.getElementById('add-copies').value, 10);
+      const shelf = document.getElementById('add-shelf').value.trim();
+
+      // Clear previous errors
+      document.querySelectorAll('#add-book-form .error-msg').forEach(el => el.classList.remove('visible'));
+
+      let valid = true;
+      if (!isbn) {
+        setFieldError('err-add-isbn', 'ISBN / Book ID is required.');
+        valid = false;
+      } else if (books.some(b => b.isbn.toLowerCase() === isbn.toLowerCase())) {
+        setFieldError('err-add-isbn', 'Duplicate ISBN already exists.');
+        valid = false;
+      }
+      if (!title) { setFieldError('err-add-title', 'Book title is required.'); valid = false; }
+      if (!author) { setFieldError('err-add-author', 'Author name is required.'); valid = false; }
+      if (!category) { setFieldError('err-add-category', 'Please select a category.'); valid = false; }
+      if (isNaN(copies) || copies < 1) { setFieldError('err-add-copies', 'At least 1 copy required.'); valid = false; }
+      if (!shelf) { setFieldError('err-add-shelf', 'Shelf code is required.'); valid = false; }
+
+      if (!valid) return;
+
+      books.unshift({
+        isbn,
+        title,
+        author,
+        category,
+        totalCopies: copies,
+        shelf,
+        addedAt: Date.now()
+      });
+
+      saveState();
+      addAuditLog(`Added "${title}" (${isbn}) with ${copies} copies at Shelf ${shelf}.`);
+      refreshAll();
+      this.reset();
+      document.getElementById('add-copies').value = 3;
+      showToast(`Added "${title}" to catalog.`, 'success');
+    });
+
+    function setFieldError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+    /**
+     * MODAL HELPERS & ISSUE WORKFLOW
+     */
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('open');
+    }
+
+    function openIssueModal(isbn) {
+      const book = books.find(b => b.isbn === isbn);
+      if (!book) return;
+
+      document.getElementById('issue-isbn').value = book.isbn;
+      document.getElementById('issue-book-label').textContent = `${book.title} (${book.isbn})`;
+      document.getElementById('issue-member-name').value = '';
+      document.getElementById('issue-member-id').value = '';
+      document.getElementById('issue-due-date').value = getOffsetDateStr(14); // Default +14 days
+      document.getElementById('err-issue-name').classList.remove('visible');
+      document.getElementById('err-issue-id').classList.remove('visible');
+
+      document.getElementById('modal-issue').classList.add('open');
+      document.getElementById('issue-member-name').focus();
+    }
+
+    document.getElementById('issue-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const isbn = document.getElementById('issue-isbn').value;
+      const memberName = document.getElementById('issue-member-name').value.trim();
+      const memberId = document.getElementById('issue-member-id').value.trim();
+      const dueDate = document.getElementById('issue-due-date').value;
+
+      let valid = true;
+      if (!memberName) { document.getElementById('err-issue-name').classList.add('visible'); valid = false; }
+      if (!memberId) { document.getElementById('err-issue-id').classList.add('visible'); valid = false; }
+      if (!dueDate) valid = false;
+      if (!valid) return;
+
+      const book = books.find(b => b.isbn === isbn);
+      if (!book) return;
+
+      loans.unshift({
+        loanId: 'LN-' + Date.now().toString().slice(-5),
+        isbn,
+        memberName,
+        memberId,
+        issueDate: getOffsetDateStr(0),
+        dueDate
+      });
+
+      saveState();
+      addAuditLog(`Issued "${book.title}" to ${memberName} (${memberId}), due ${dueDate}.`);
+      refreshAll();
+      closeModal('modal-issue');
+      showToast(`Issued "${book.title}" to ${memberName}.`, 'success');
+    });
+
+    /**
+     * RENEW (+7 DAYS) & RETURN BOOK WORKFLOW
+     */
+    function renewLoan(loanId) {
+      const loan = loans.find(l => l.loanId === loanId);
+      if (!loan) return;
+
+      const currentDue = new Date(loan.dueDate + 'T00:00:00');
+      currentDue.setDate(currentDue.getDate() + 7);
+      loan.dueDate = currentDue.toISOString().split('T')[0];
+
+      const book = books.find(b => b.isbn === loan.isbn);
+      saveState();
+      addAuditLog(`Renewed "${book ? book.title : loan.isbn}" for ${loan.memberName} (+7 days -> ${loan.dueDate}).`);
+      refreshAll();
+      showToast(`Loan renewed by 7 days (New Due: ${loan.dueDate}).`, 'warning');
+    }
+
+    function returnLoan(loanId) {
+      const idx = loans.findIndex(l => l.loanId === loanId);
+      if (idx === -1) return;
+
+      const loan = loans[idx];
+      const book = books.find(b => b.isbn === loan.isbn);
+      const fine = calculateOverdueDays(loan.dueDate) * FINE_PER_DAY;
+
+      loans.splice(idx, 1);
+      saveState();
+      addAuditLog(`Returned "${book ? book.title : loan.isbn}" from ${loan.memberName}${fine > 0 ? ` (Fine collected: ₹${fine})` : ''}.`);
+      refreshAll();
+      showToast(`Book returned${fine > 0 ? ` with ₹${fine} fine settled` : ''}.`, 'success');
+    }
+
+    /**
+     * EDIT BOOK MODAL & HANDLER
+     */
+    function openEditModal(isbn) {
+      const book = books.find(b => b.isbn === isbn);
+      if (!book) return;
+
+      document.getElementById('edit-isbn').value = book.isbn;
+      document.getElementById('edit-title').value = book.title;
+      document.getElementById('edit-author').value = book.author;
+      document.getElementById('edit-category').value = book.category;
+      document.getElementById('edit-copies').value = book.totalCopies;
+      document.getElementById('edit-shelf').value = book.shelf;
+      document.getElementById('err-edit-copies').classList.remove('visible');
+
+      document.getElementById('modal-edit').classList.add('open');
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const isbn = document.getElementById('edit-isbn').value;
+      const title = document.getElementById('edit-title').value.trim();
+      const author = document.getElementById('edit-author').value.trim();
+      const category = document.getElementById('edit-category').value;
+      const totalCopies = parseInt(document.getElementById('edit-copies').value, 10);
+      const shelf = document.getElementById('edit-shelf').value.trim();
+
+      const issuedCount = getBookLoanStats(isbn).issuedCount;
+      if (isNaN(totalCopies) || totalCopies < issuedCount) {
+        setFieldError('err-edit-copies', `Cannot be less than currently issued copies (${issuedCount}).`);
+        return;
+      }
+      if (!title || !author || !shelf) return;
+
+      const book = books.find(b => b.isbn === isbn);
+      if (book) {
+        book.title = title;
+        book.author = author;
+        book.category = category;
+        book.totalCopies = totalCopies;
+        book.shelf = shelf;
+        saveState();
+        addAuditLog(`Edited book record "${title}" (${isbn}).`);
+        refreshAll();
+        closeModal('modal-edit');
+        showToast(`Updated "${title}".`, 'success');
+      }
+    });
+
+    /**
+     * DELETE BOOK MODAL & HANDLER
+     */
+    function openDeleteModal(isbn) {
+      const book = books.find(b => b.isbn === isbn);
+      if (!book) return;
+
+      const issuedCount = getBookLoanStats(isbn).issuedCount;
+      if (issuedCount > 0) {
+        showToast(`Cannot delete "${book.title}" while ${issuedCount} copy/copies are issued.`, 'danger');
+        return;
+      }
+
+      document.getElementById('delete-isbn').value = book.isbn;
+      document.getElementById('delete-modal-msg').textContent =
+        `Are you sure you want to remove "${book.title}" (${book.isbn}) from the library catalog?`;
+      document.getElementById('modal-delete').classList.add('open');
+    }
+
+    function confirmDeleteBook() {
+      const isbn = document.getElementById('delete-isbn').value;
+      const idx = books.findIndex(b => b.isbn === isbn);
+      if (idx !== -1) {
+        const removed = books[idx];
+        books.splice(idx, 1);
+        saveState();
+        addAuditLog(`Deleted "${removed.title}" (${removed.isbn}) from catalog.`);
+        refreshAll();
+        showToast(`Deleted "${removed.title}".`, 'danger');
+      }
+      closeModal('modal-delete');
+    }
+
+    /**
+     * UTILITY OPTIONS: CLEAR LOGS, EXPORT CSV & RESET DEMO DATA
+     */
+    function clearLogs() {
+      logs = [];
+      saveState();
+      renderLogs();
+      renderDashboardAnalytics();
+      showToast('Activity log cleared.', 'warning');
+    }
+
+    function exportCatalogCSV() {
+      const headers = ['ISBN', 'Title', 'Author', 'Category', 'Shelf', 'Total Copies', 'Issued Copies', 'Available Copies'];
+      const rows = books.map(b => {
+        const issued = getBookLoanStats(b.isbn).issuedCount;
+        const avail = Math.max(0, b.totalCopies - issued);
+        return [b.isbn, b.title, b.author, b.category, b.shelf, b.totalCopies, issued, avail]
+          .map(val => `"${String(val).replace(/"/g, '""')}"`)
+          .join(',');
+      });
+
+      const csvContent = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `library-catalog-${getOffsetDateStr(0)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      addAuditLog('Exported library catalog to CSV.');
+      showToast('Catalog exported as CSV file.', 'success');
+    }
+
+    function resetDemoData() {
+      const { seedBooks, seedLoans, seedLogs } = createDemoSeed();
+      books = seedBooks;
+      loans = seedLoans;
+      logs = seedLogs;
+      saveState();
+      refreshAll();
+      showToast('Demo catalog and circulation data restored.', 'success');
+    }
+
+    /**
+     * BOOTSTRAP APPLICATION ON DOM LOAD
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem(KEYS.THEME) || 'light';
+      applyTheme(savedTheme);
+      loadState();
+      refreshAll();
+    });
+  </script>
+</body>
+</html>
